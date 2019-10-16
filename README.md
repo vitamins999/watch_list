@@ -5,3 +5,5 @@ Scrapes specified www.icheckmovies.com list to see if films on list are availabl
 - Amazon Prime.
 - BBC iPlayer
 - All4
+
+(Currently UK only)
