@@ -5,18 +5,28 @@
 import requests
 import bs4
 import re
+import sys
 from justwatch import JustWatch
+from requests.exceptions import HTTPError
 
 movies = []
 years = []
 movie_dict = {}
 rank = 0
 
-checklist = "https://www.icheckmovies.com/lists/imdbs+top+250/"
+checklist = input(
+    '\nPlease enter the full webaddress of the www.icheckmovies.com list (including "https")\n\n'
+)
 
 # Request webpage of icheckmovies list.
 
-res_movie_list = requests.get(checklist)
+try:
+    res_movie_list = requests.get(checklist)
+except (HTTPError, Exception):
+    print(
+        "\nWeb address invalid.  Either it was typed in wrong or the icheckmovies is down.\n"
+    )
+    sys.exit()
 
 # Beautiful Soup scrape movie names and add to movies list.
 
@@ -24,11 +34,17 @@ movie_soup = bs4.BeautifulSoup(res_movie_list.text, features="html.parser")
 movie_titles = movie_soup.find_all("h2")
 movie_years = movie_soup.find_all(title=re.compile("year"))
 
+for element in movie_titles:
+    aka = (
+        element.next_element.next_element.next_element.next_element.next_element.next_element.next_element.next_element.next_element.next_element.next_element
+    )
+    if aka.name == "em":
+        movies.append(aka.get_text(strip=True))
+    else:
+        movies.append(element.get_text(strip=True))
+
 for movie_year in movie_years:
     years.append(movie_year.get_text(strip=True))
-
-for movie_title in movie_titles:
-    movies.append(movie_title.get_text(strip=True))
 
 del movies[0]
 del years[0]
@@ -56,8 +72,14 @@ for key, value in movie_dict.items():
                     if result["offers"][i]["provider_id"] == 9:
                         print(f"{rank}.\t {key} is available on Amazon Prime Video.")
                         break
+                    if result["offers"][i]["provider_id"] == 38:
+                        print(f"{rank}.\t {key} is available on BBC iPlayer.")
+                        break
+                    if result["offers"][i]["provider_id"] == 103:
+                        print(f"{rank}.\t {key} is available on All4.")
+                        break
         except (IndexError, KeyError):
             pass
 
-print("\nDone!")
+print("\nDone!\n")
 
