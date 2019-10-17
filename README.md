@@ -1,4 +1,4 @@
-# icheckmovies Movie List Streaming Checker
+# Watch List
 
 Scrapes specified www.icheckmovies.com list to see if films on list are available to stream for free on:
 - Netflix
