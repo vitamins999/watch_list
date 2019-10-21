@@ -15,21 +15,27 @@ from requests.exceptions import HTTPError
 
 
 def main():
-
-    movies = []
-    years = []
     movie_dict = {}
     save_info = []
-    rank = 0
 
     checklist = input(
         '\nPlease enter the full webaddress of the www.icheckmovies.com list (including "https")\n\n'
     )
 
+    movie_dict = icheckmovies(checklist)
+    save_info = justwatch_scrape(movie_dict)
+    save_to_file(save_info, checklist)
+
+
+def icheckmovies(checklist_address):
+    movies = []
+    years = []
+    movie_dict_icheckmovies = {}
+
     # Request webpage of icheckmovies list.
 
     try:
-        res_movie_list = requests.get(checklist)
+        res_movie_list = requests.get(checklist_address)
     except (HTTPError, Exception):
         print(
             "\nWeb address invalid.  Either it was typed in wrong or the icheckmovies is down.\n"
@@ -67,7 +73,16 @@ def main():
     del movies[0]
     del years[0]
 
-    movie_dict = dict(zip(movies, years))
+    movie_dict_icheckmovies = dict(zip(movies, years))
+    return movie_dict_icheckmovies
+
+
+def justwatch_scrape(movie_dict):
+
+    movie_dict_jw = {}
+    save_info = []
+    rank = 0
+    movie_dict_jw = movie_dict
 
     # Loop through movies list, searching for each movie in the justwatch API,
     # then finding out if it's available to stream for free and where.
@@ -75,7 +90,7 @@ def main():
 
     just_watch = JustWatch(country="GB")
 
-    for key, value in movie_dict.items():
+    for key, value in movie_dict_jw.items():
         results = just_watch.search_for_item(query=key)
         rank += 1
 
@@ -106,7 +121,7 @@ def main():
                 pass
 
     print("\nDone!\n")
-    save_to_file(save_info, checklist)
+    return save_info
 
 
 def streaming_details(rank, film, service):
