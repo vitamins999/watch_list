@@ -87,34 +87,32 @@ def main():
                     length = len(result["offers"])
                     for i in range(length):
                         if result["offers"][i]["provider_id"] == 8:
-                            text_to_save = f"{rank}.\t {key} is available on Netflix."
-                            print(text_to_save)
-                            save_info.append(text_to_save)
+                            save_info.append(streaming_details(rank, key, "Netflix"))
                             break
                         if result["offers"][i]["provider_id"] == 9:
-                            text_to_save = (
-                                f"{rank}.\t {key} is available on Amazon Prime Video."
+                            save_info.append(
+                                streaming_details(rank, key, "Amazon Prime Video")
                             )
-                            print(text_to_save)
-                            save_info.append(text_to_save)
                             break
                         if result["offers"][i]["provider_id"] == 38:
-                            text_to_save = (
-                                f"{rank}.\t {key} is available on BBC iPlayer."
+                            save_info.append(
+                                streaming_details(rank, key, "BBC iPlayer")
                             )
-                            print(text_to_save)
-                            save_info.append(text_to_save)
                             break
                         if result["offers"][i]["provider_id"] == 103:
-                            text_to_save = f"{rank}.\t {key} is available on All4."
-                            print(text_to_save)
-                            save_info.append(text_to_save)
+                            save_info.append(streaming_details(rank, key, "All4"))
                             break
             except (IndexError, KeyError):
                 pass
 
     print("\nDone!\n")
     save_to_file(save_info, checklist)
+
+
+def streaming_details(rank, film, service):
+    text_to_save = f"{rank}.\t {film} is available on {service}."
+    print(text_to_save)
+    return text_to_save
 
 
 def save_to_file(movies_to_save, checklist_name):
